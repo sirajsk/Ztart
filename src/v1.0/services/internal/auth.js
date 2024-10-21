@@ -45,6 +45,8 @@ const authenticateUser = async (username) => {
       },
     ],
   });
+  console.log(user);
+  
   if (!user) throw new NotFoundException(messages?.invalidEmailPass);
   return user;
 };
@@ -91,8 +93,7 @@ const getActiveRole = async (user) => {
 const generatePayload = async (user, role) => {
   return {
     userId: user?.id,
-    role: role?.name,
-    mobileNumber: user?.mobileNumber,
+    role: role,
     email: user?.email,
     sessionId: await generateUUID(),
   };
@@ -191,6 +192,8 @@ const generateTokenHeaders = ({ accessToken, refreshToken }) => {
 };
 
 const handleAuthenticate = async (data, headers) => {
+  console.log("asdfgsdfgh");
+  
   const user = await authenticateUser(data?.username);
   console.log(user);
 
@@ -202,7 +205,11 @@ const handleAuthenticate = async (data, headers) => {
 
   // const role = await getActiveRole(user);
   const payload = await generatePayload(user, 'admin');
+  console.log(payload);
+  
   const tokens = await generateTokens(payload, headers);
+  console.log(tokens);
+  
   const profile = await getProfile(payload?.userId);
   return {
     headers: generateTokenHeaders(tokens),
